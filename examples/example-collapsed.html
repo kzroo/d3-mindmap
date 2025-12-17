@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D3 Mindmap - Collapsed Example</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            height: 100vh;
+            overflow: hidden;
+            background: #f5f5f5;
+        }
+
+        .container {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+        }
+
+        .controls {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            z-index: 1000;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .controls button {
+            display: block;
+            width: 100%;
+            padding: 10px 15px;
+            margin-bottom: 10px;
+            background: #4dabf7;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+
+        .controls button:hover {
+            background: #339af0;
+        }
+
+        .controls button:last-child {
+            margin-bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="mindmap-container"></div>
+
+    <div class="controls">
+        <button id="theme-toggle">Toggle Theme</button>
+    </div>
+
+    <script type="module">
+        import getRender from './dist/index.js';
+
+        // Helper function to recursively set all nodes to collapsed
+        // This sets the collapsed flag, which will be processed by applyCollapsedStates
+        function setAllCollapsed(node) {
+            if (node.children && node.children.length > 0) {
+                node.collapsed = true;
+                // Recursively set children to collapsed
+                node.children.forEach(setAllCollapsed);
+            }
+        }
+
+        // Sample mindmap data - same as example.html, but all nodes will be collapsed
+        const mindmapData = {
+            name: "Project Planning",
+            children: [
+                {
+                    name: "Research",
+                    children: [
+                        { name: "Market Analysis" },
+                        { name: "Competitor Study" },
+                        { 
+                            name: "User Research",
+                            children: [
+                                { name: "Surveys" },
+                                { name: "Interviews" },
+                                { name: "Focus Groups" }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    name: "Design",
+                    children: [
+                        { name: "Wireframes" },
+                        { 
+                            name: "Prototypes",
+                            children: [
+                                { name: "Low Fidelity" },
+                                { name: "High Fidelity" }
+                            ]
+                        },
+                        { name: "User Testing" }
+                    ]
+                },
+                {
+                    name: "Development",
+                    children: [
+                        {
+                            name: "Frontend",
+                            children: [
+                                { name: "React Components" },
+                                { name: "State Management" },
+                                { name: "Styling" }
+                            ]
+                        },
+                        {
+                            name: "Backend",
+                            children: [
+                                { name: "API Design" },
+                                { name: "Database Schema" },
+                                { name: "Authentication" }
+                            ]
+                        },
+                        {
+                            name: "DevOps",
+                            children: [
+                                { name: "CI/CD Pipeline" },
+                                { name: "Containerization" },
+                                { name: "Monitoring" }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    name: "Testing",
+                    children: [
+                        { name: "Unit Tests" },
+                        { name: "Integration Tests" },
+                        { name: "E2E Tests" }
+                    ]
+                },
+                {
+                    name: "Deployment",
+                    children: [
+                        { name: "Staging Environment" },
+                        { name: "Production Release" },
+                        { name: "Post-Launch Monitoring" }
+                    ]
+                }
+            ]
+        };
+
+        // Set all nodes to collapsed
+        setAllCollapsed(mindmapData);
+
+        // Initialize the mindmap
+        const container = document.getElementById('mindmap-container');
+        const render = getRender(container, {
+            theme: 'light',
+            defaultNodeSize: 5,
+            onLabelClick: (node) => {
+                console.log('Label clicked:', node);
+            },
+            onToggleClick: (node) => {
+                console.log('Toggle clicked:', node);
+            }
+        });
+
+        const { setTheme } = render(mindmapData);
+
+        // Theme toggle functionality
+        let currentTheme = 'light';
+        document.getElementById('theme-toggle').addEventListener('click', () => {
+            currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+            setTheme(currentTheme);
+        });
+    </script>
+</body>
+</html>
+

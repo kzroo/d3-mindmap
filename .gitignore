@@ -69,3 +69,7 @@ typings/
 dist/
 .parcel-cache
 .DS_Store
+
+# Local deploy scripts
+deploy.local.sh
+*.local.*
