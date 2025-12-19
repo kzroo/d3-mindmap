@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>D3 Mindmap RTL Example</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; height: 100vh; overflow: hidden; background: #f5f5f5; }
+    .container { width: 100%; height: 100vh; position: relative; }
+    .controls { position: absolute; top: 15px; right: 20px; z-index: 1000; padding: 12px; border-radius: 8px; }
+    .controls button { display: block; width: 100%; padding: 10px 15px; background: #4dabf7; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 14px; transition: background 0.2s; }
+    .controls button:hover { background: #339af0; }
+  </style>
+</head>
+<body>
+  <div class="container" id="mindmap-container"></div>
+  <div class="controls">
+    <button id="theme-toggle">Toggle Theme</button>
+  </div>
+
+  <script type="module">
+    import getRender from '../dist/index.js';
+
+    let currentTheme = 'light';
+
+    const mindmapData = {
+      name: 'مركز الفكرة',
+      labelBackground: { light: '#ffe8cc', dark: '#2b2f38' },
+      children: [
+        {
+          name: 'مرحلة البحث',
+          labelBackground: { light: '#d0ebff', dark: '#1f3b54' },
+          children: [
+            { name: 'تحليل السوق', labelBackground: { light: '#f1f3f5', dark: '#3a3f46' } },
+            { name: 'دراسة المنافسين', labelBackground: { light: '#f1f3f5', dark: '#3a3f46' } },
+            { name: 'مقابلات المستخدمين', labelBackground: { light: '#f1f3f5', dark: '#3a3f46' } }
+          ]
+        },
+        {
+          name: 'التصميم',
+          labelBackground: { light: '#e6fcf5', dark: '#20403b' },
+          children: [
+            { name: 'النماذج الأولية', labelBackground: { light: '#f1f3f5', dark: '#3a3f46' } },
+            { name: 'اختبارات قابلية الاستخدام', labelBackground: { light: '#f1f3f5', dark: '#3a3f46' } }
+          ]
+        },
+        {
+          name: 'التنفيذ',
+          labelBackground: { light: '#fff3bf', dark: '#4a3723' },
+          children: [
+            { name: 'الواجهة الأمامية', labelBackground: { light: '#f1f3f5', dark: '#3a3f46' } },
+            { name: 'الواجهة الخلفية', labelBackground: { light: '#f1f3f5', dark: '#3a3f46' } },
+            { name: 'البنية التحتية', labelBackground: { light: '#f1f3f5', dark: '#3a3f46' } }
+          ]
+        }
+      ]
+    };
+
+    const container = document.getElementById('mindmap-container');
+    const render = getRender(container, {
+      direction: 'rtl',
+      theme: 'light',
+      defaultNodeSize: 5,
+      labelBackground: () => currentTheme === 'dark' ? '#2b2f38' : '#f8f9fa'
+    });
+
+    const { setTheme } = render(mindmapData);
+
+    document.getElementById('theme-toggle').addEventListener('click', () => {
+      currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+      setTheme(currentTheme);
+    });
+  </script>
+</body>
+</html>
+
