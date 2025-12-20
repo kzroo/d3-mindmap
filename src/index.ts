@@ -58,6 +58,7 @@ interface Options {
   labelBackground?: string | ((node: NodeInfo) => string);
   labelPadding?: number | { x: number; y: number };
   labelOffset?: number;
+  backgroundColor?: string | ((theme: Theme) => string);
 }
 
 interface Axis {
@@ -117,11 +118,19 @@ export default function getRender(container: HTMLElement, options: Options = {})
     : options.labelPadding?.y ?? LABEL_PADDING_Y_DEFAULT;
   const labelBaseOffset = options.labelOffset ?? LABEL_BASE_OFFSET_DEFAULT;
 
+  const getBackgroundColor = (): string => {
+    const configured = options.backgroundColor;
+    if (typeof configured === 'function') {
+      return configured(theme);
+    }
+    return configured ?? THEMES[theme].bgColor;
+  };
+
   const svg = select(container).append('svg')
     .attr('width', '100%')
     .attr('height', '100%')
     .style('overflow', 'scroll')
-    .style('background', THEMES[theme].bgColor);
+    .style('background', getBackgroundColor());
   const svgGroup = svg.append('g');
 
   // Read dimensions dynamically for resize support
@@ -398,7 +407,7 @@ export default function getRender(container: HTMLElement, options: Options = {})
 
   function setTheme(newTheme: Theme) {
     theme = newTheme;
-    svg.style('background', THEMES[theme].bgColor);
+    svg.style('background', getBackgroundColor());
     svgGroup.selectAll('.link').style('stroke', THEMES[theme].linkColor);
     svgGroup.selectAll('.node text').style('fill', THEMES[theme].textColor);
     const nodes = svgGroup.selectAll<SVGGElement, MNode>('.node');
